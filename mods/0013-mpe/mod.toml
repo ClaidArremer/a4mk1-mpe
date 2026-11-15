@@ -1,0 +1,35 @@
+[mod]
+id      = "0013-mpe"
+title   = "MPE: Lower Zone (manager ch 1, members ch 2-5) on the poly voices"
+
+# Not in the default build. OS 1.56. Uses the space 0010 / 0012 claim, so it cannot
+# be in an image with them.
+enabled  = false
+excludes = ["0010-wave-osc", "0012-res-limit"]
+
+# re-only | built | hardware-verified | retracted
+status  = "hardware-verified"
+
+summary = """
+MIDI Polyphonic Expression, MPE Lower Zone, as an extension of poly mode. While the
+active track is one of the POLY CONFIG voices, channel 1 is the manager and channels
+2-5 play voices 1-4 - one note per channel, so each note gets its own expression:
+Strike (note velocity) drives the sound's VELOCITY modulation, Bend its PITCH BEND
+modulation (member bend +-48 st = full PITCH BEND depth), Slide (CC74) its MOD WHEEL
+modulation and Pressure (channel pressure) its AFTERTOUCH modulation, routed with the
+stock SOUND SETUP menus. The manager's bend (+-2 st), pressure, CC74 and CC1 apply to
+every voice; its other messages (and notes) go to stock as before. An MPE
+Configuration Message (RPN 6 on channel 1) sets the number of member channels, and 0
+turns MPE off until the next one. A per-kit switch (byte 52 of the FX track's spare
+storage, 0 = on) turns MPE off; 0015-arp-locks puts it on the ARP page as knob J. With poly off, or the active track outside the poly
+voices, everything is stock.
+
+Source: mpe.c (C) and hook.s; gen.sh regenerates stub.s. Stock addresses are in
+mpe.c with what they are; how they were found is in design.md.
+"""
+
+[sources]
+stub = "stub.s"
+
+[requires]
+symbols = []

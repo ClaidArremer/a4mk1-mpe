@@ -1,0 +1,132 @@
+# ---------------------------------------------------------------- 0013-mpe
+# Space: the regions 0010 / 0012 claim (0013 excludes both). Code only; its state is
+# in free DDR at 0x4680e000 (0x200 B, between 0011's SNAP, which ends 0x46808d2c, and
+# 0007's buffers at 0x4680c000 / HOLD .. 0x4680c220 - it is above them, below
+# 0x4680ffff), initialised on first use behind a magic word.
+
+[[cave]]
+owner   = "0013-mpe"
+addr    = 0x401eeb08
+size    = 0x1f4
+section = ".mpe1"
+note    = "State, the zone tests, the engine-loop hook and mpe_voice_index (cave3)."
+
+[[cave]]
+owner   = "0013-mpe"
+addr    = 0x401eecfc
+size    = 0x120
+section = ".mpe7"
+note    = "mpe_alloc: the poly allocator wrapper (cave3)."
+
+[[cave]]
+owner   = "0013-mpe"
+addr    = 0x401eee1c
+size    = 0xd4
+section = ".mpe6"
+note    = "mpe_cc (cave3)."
+
+[[cave]]
+owner   = "0013-mpe"
+addr    = 0x4009a35c
+size    = 0xdc
+section = ".mpe2"
+note    = "mpe_note_on (cave8)."
+
+[[cave]]
+owner   = "0013-mpe"
+addr    = 0x40164cd4
+size    = 0xc6
+section = ".mpe4"
+note    = "mpe_bend (cave7)."
+
+[[cave]]
+owner   = "0013-mpe"
+addr    = 0x40090d7e
+size    = 0x9c
+section = ".mpe3"
+note    = "mpe_note_off (cave10)."
+
+[[cave]]
+owner   = "0013-mpe"
+addr    = 0x40234f50
+size    = 0x8c
+section = ".mpe5"
+note    = "mpe_pressure (cave)."
+
+[[cave]]
+owner   = "0013-mpe"
+addr    = 0x400a1270
+size    = 0x48
+section = ".mpe8"
+note    = "The MPE Configuration Message (RPN 6) tracker (cave21)."
+
+# The MIDI task (0x4006385a) dispatches each message through 16 handler pointers
+# indexed by status >> 4 at 0x4017b598. Five of them now go to 0013, which falls
+# back to the stock handler for anything that is not MPE.
+[[patch]]
+owner       = "0013-mpe"
+addr        = 0x4017b5b8
+size        = 4
+expect      = "40064ede"
+from_symbol = "mpe_note_off"
+
+[[patch]]
+owner       = "0013-mpe"
+addr        = 0x4017b5bc
+size        = 4
+expect      = "400652ae"
+from_symbol = "mpe_note_on"
+
+[[patch]]
+owner       = "0013-mpe"
+addr        = 0x4017b5c4
+size        = 4
+expect      = "40063cee"
+from_symbol = "mpe_cc"
+
+[[patch]]
+owner       = "0013-mpe"
+addr        = 0x4017b5cc
+size        = 4
+expect      = "40063e48"
+from_symbol = "mpe_pressure"
+
+[[patch]]
+owner       = "0013-mpe"
+addr        = 0x4017b5d0
+size        = 4
+expect      = "40063f54"
+from_symbol = "mpe_bend"
+
+# The engine's modulation loop: movea.l %d5,%a1 / addq.l #4,%d6 / move.l (%a0)+,%d2
+# at 0x400fd164 becomes jsr mpe_loop_hook (which does all three).
+[[patch]]
+owner   = "0013-mpe"
+addr    = 0x400fd164
+size    = 2
+expect  = "2245"
+replace = "4eb9"
+
+[[patch]]
+owner       = "0013-mpe"
+addr        = 0x400fd166
+size        = 4
+expect      = "58862418"
+from_symbol = "mpe_loop_hook"
+
+# The engine's note start calls the poly allocator 0x400ff284 at 0x400fc4a4
+# (jsr abs.l); its target becomes mpe_alloc, which calls the stock one unless the
+# note came from a member channel.
+[[patch]]
+owner       = "0013-mpe"
+addr        = 0x400fc4a6
+size        = 4
+expect      = "400ff284"
+from_symbol = "mpe_alloc"
+
+[[cave]]
+owner   = "0013-mpe"
+addr    = 0x40074558
+size    = 0x4c
+section = ".mpe9"
+note    = "live(): the MPE gate incl. the kit switch (0015); .mpe9 (cave26)."
