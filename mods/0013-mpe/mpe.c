@@ -88,17 +88,23 @@ SEC(".mpe1") static struct mpe *st(void)
 SEC(".mpe1") static s32 clamp15(s32 v) { return v < 0 ? 0 : (v > 0x7fff ? 0x7fff : v); }
 
 /* The kit's MPE switch (0015's ARP page, knob J): byte 52 of the FX track's spare
- * storage (0006 saves it with the kit). 0 = MPE on, so kits from before stay on. */
+ * storage (0006 saves it with the kit), nonzero = MPE on, so kits start with MPE off.
+ * Only with the build parameter kit_switch = 1 (a build with 0015); otherwise MPE is
+ * always available. */
 #define PROJECT_PTR    0x415cba28u
 #define KIT_FX_STORE   4404             /* project + this: the FX track's storage */
-#define MPE_OFF_BYTE   52
+#define MPE_ON_BYTE    52
 
 /* MPE applies while enabled and the active track is a poly voice. */
 SEC(".mpe9") static int live(struct mpe *s)
 {
-    u32 p = V32(PROJECT_PTR);
-    if (p && V32(p + KIT_FX_STORE) && V8(V32(p + KIT_FX_STORE) + MPE_OFF_BYTE))
-        return 0;
+    u32 ks;
+    __asm__ ("move.l #P_KIT_SWITCH,%0" : "=d" (ks));    /* the build parameter */
+    if (ks) {
+        u32 p = V32(PROJECT_PTR), k = p ? V32(p + KIT_FX_STORE) : 0;
+        if (!k || !V8(k + MPE_ON_BYTE))
+            return 0;
+    }
     u32 t = V32(ACTIVE_TRACK);
     return s->members && t < NV && ((V32(POLY_VOICES) >> t) & 1);
 }

@@ -127,6 +127,6 @@ from_symbol = "mpe_alloc"
 [[cave]]
 owner   = "0013-mpe"
 addr    = 0x40074558
-size    = 0x4c
+size    = 0x50
 section = ".mpe9"
 note    = "live(): the MPE gate incl. the kit switch (0015); .mpe9 (cave26)."

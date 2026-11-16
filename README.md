@@ -26,9 +26,11 @@ stock OS with that framework. No Elektron OS files are included here.
   0 turns MPE off until the next one.
 - Live only while poly mode is on and the active track is one of the poly voices;
   otherwise everything is stock. The stock "use track sounds" poly option still works.
-- A per-kit **MPE on/off** switch (saved with the kit). The
-  [a4mk1-arplocks](https://github.com/ClaidArremer/a4mk1-arplocks) mod puts it on the
-  ARP page (knob J); without it, MPE is always on.
+- Optional per-kit **MPE on/off** switch (saved with the kit, **off by default**), when
+  built with `PARAMS="0013-mpe:kit_switch=1"` together with
+  [a4mk1-arplocks](https://github.com/ClaidArremer/a4mk1-arplocks), which puts the switch
+  on the ARP page (knob J). Built without it (`kit_switch = 0`, the default), MPE is
+  always available.
 
 ## A4 setup
 
@@ -47,6 +49,9 @@ stock OS with that framework. No Elektron OS files are included here.
    ```
    make custom MODS="0001-scale-lock 0002-slide-303 0006-fx-slot 0011-rand-track 0013-mpe" TAG=mpe
    ```
+
+   With a4mk1-arplocks (MPE switch on the ARP page, off by default), see that repo's
+   README for the full command; it adds `PARAMS="0013-mpe:kit_switch=1"`.
 
    0013 cannot share an image with `0010-wave-osc` or `0012-res-limit` (it uses their
    code space).

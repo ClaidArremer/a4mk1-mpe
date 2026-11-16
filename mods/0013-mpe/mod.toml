@@ -20,13 +20,20 @@ modulation and Pressure (channel pressure) its AFTERTOUCH modulation, routed wit
 stock SOUND SETUP menus. The manager's bend (+-2 st), pressure, CC74 and CC1 apply to
 every voice; its other messages (and notes) go to stock as before. An MPE
 Configuration Message (RPN 6 on channel 1) sets the number of member channels, and 0
-turns MPE off until the next one. A per-kit switch (byte 52 of the FX track's spare
-storage, 0 = on) turns MPE off; 0015-arp-locks puts it on the ARP page as knob J. With poly off, or the active track outside the poly
+turns MPE off until the next one. With kit_switch = 1, a per-kit switch (byte 52 of the FX
+track's spare storage, default off) turns MPE on; 0015-arp-locks puts it on the ARP page
+as knob J. With poly off, or the active track outside the poly
 voices, everything is stock.
 
 Source: mpe.c (C) and hook.s; gen.sh regenerates stub.s. Stock addresses are in
 mpe.c with what they are; how they were found is in design.md.
 """
+
+[params]
+# 1 = MPE follows the kit's MPE switch (byte 52 of the FX track's spare storage,
+#     default off), which 0015-arp-locks puts on the ARP page (knob J). Use with 0015.
+# 0 = no switch: MPE always available.
+kit_switch = 0
 
 [sources]
 stub = "stub.s"
