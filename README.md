@@ -47,7 +47,7 @@ stock OS with that framework. No Elektron OS files are included here.
 4. Build, e.g.:
 
    ```
-   make custom MODS="0001-scale-lock 0002-slide-303 0006-fx-slot 0011-rand-track 0013-mpe" TAG=mpe
+   make custom MODS="0001-scale-lock 0006-fx-slot 0011-rand-track 0013-mpe" TAG=mpe
    ```
 
    With a4mk1-arplocks (MPE switch on the ARP page, off by default), see that repo's
